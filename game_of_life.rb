@@ -29,7 +29,7 @@
 # .###. T H E P R O G R A M
 # ...#.
 # ..#.. Our program should take a string representing the initial
-# ...#. state of the board and a number of turns to run the game.
+# ...#. stato of the board and a number of turns to run the game.
 # .##.. It should output a string representing the board state after each turn
 
 # 1. The program should accept a board of any size.
@@ -137,16 +137,19 @@ def update_cell_alive_counters(cell_board)
     row.each_with_index do |cell, row_index|
       alive_counter = 0
       for i in [-1, 1]
-        next if cell_board[index + i].nil?
+        next if (index + i < 0) || cell_board[index + i].nil?
+
         alt_row = cell_board[index + i]
         for j in [-1, 0, 1] do
-          next if alt_row[row_index + j].nil?
+          next if (row_index + j < 0) || alt_row[row_index + j].nil?
+
           state = alt_row[row_index + j].state
           alive_counter += 1 if state == :alive
         end
       end
       for k in [-1, 1]
-        next if row[row_index + k].nil?
+        next if (row_index + k < 0) || row[row_index + k].nil?
+
         state = row[row_index + k].state
         alive_counter += 1 if state == :alive
       end
@@ -171,11 +174,13 @@ def game_of_life_with_objects(board, turns)
   # 2. cells keep track of neighboring states without computing new self state
   # 3. run through all cells to compute new state
   cell_board = build_cell_board(board)
+  cell_board_to_string(cell_board).each {|row| print "#{row}\n" }
   for i in 1..turns
+    print "\n"
     update_cell_alive_counters(cell_board)
     update_cell_states(cell_board)
+    cell_board_to_string(cell_board).each {|row| print "#{row}\n" }
   end
-  cell_board_to_string(cell_board).each {|row| print "#{row}\n" }
   print "\n"
 end
 
@@ -198,16 +203,16 @@ def process_board(board)
     row.split('').each_with_index.map do |cell, row_index|
       alive_counter = 0
       for i in [-1, 1]
-        next if board[index + i].nil?
+        next if (index + i < 0) || board[index + i].nil?
         alt_row = board[index + i]
         for j in [-1, 0, 1] do
-          next if alt_row[row_index + j].nil?
+          next if(row_index + j < 0) || alt_row[row_index + j].nil?
           state = alt_row[row_index + j]
           alive_counter += 1 if state == ALIVE
         end
       end
       for k in [-1, 1]
-        next if row[row_index + k].nil?
+        next if (row_index + k < 0) || row[row_index + k].nil?
         state = row[row_index + k]
         alive_counter += 1 if state == ALIVE
       end
@@ -221,25 +226,27 @@ def game_of_life(board, turns)
   # for determining live/dead status. An easier way is to create the next iteration's board as we
   # traverse the given board and feed it into the next loop. This gives us 'state' but uses twice as
   # much memory. But, since we're using an array of strings, it's still less memory than a ton of objects.
-  for i in 1..turns
-    board = process_board(board)
-  end
   board.each {|row| print "#{row}\n" }
+  for i in 1..turns
+    print "\n"
+    board = process_board(board)
+    board.each {|row| print "#{row}\n" }
+  end
   print "\n"
 end
 
 print "glider\n"
-game_of_life(glider, 5)
-game_of_life_with_objects(glider, 5)
+game_of_life(glider, 15)
+game_of_life_with_objects(glider, 15)
 
 print "boat\n"
-game_of_life(boat, 5)
-game_of_life_with_objects(boat, 5)
+game_of_life(boat, 15)
+game_of_life_with_objects(boat, 15)
 
 print "toad\n"
-game_of_life(toad, 5)
-game_of_life_with_objects(toad, 5)
+game_of_life(toad, 15)
+game_of_life_with_objects(toad, 15)
 
 print "pulsar\n"
-game_of_life(pulsar, 5)
-game_of_life_with_objects(pulsar, 5)
+game_of_life(pulsar, 15)
+game_of_life_with_objects(pulsar, 15)
